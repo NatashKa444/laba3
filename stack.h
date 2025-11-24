@@ -29,10 +29,10 @@ void insertAtPosition(Stack *stack, int position, int data);
 void deleteAtPosition(Stack *stack, int position);
 void editAtPosition(Stack *stack, int position, int newData);
 
+// чуть позже
 // void insertionSort(Stack* stack);
 // Stack* mergeSort(Stack* stack);
 // void measureSortTime(Stack* stack, const char* sortType, const char* filename);
-
 // void saveStackToFile(Stack* stack, const char* filename);
 // Stack* loadStackFromFile(const char* filename);
 // void generateTestFiles();

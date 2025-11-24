@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
         printf("9. Загрузить из файла\n");
         printf("0. Выход\n");
         printf("Выберите: ");
-
         if (scanf("%d", &choice) != 1)
         {
             printf("Ошибка ввода!\n");
@@ -47,7 +46,6 @@ int main(int argc, char *argv[])
             continue;
         }
         clearInputBuffer();
-
         switch (choice)
         {
         case 1:

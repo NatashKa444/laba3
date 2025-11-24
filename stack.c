@@ -94,7 +94,7 @@ void deleteAtPosition(Stack *stack, int position)
 {
     if (position < 1 || position > stack->size)
     {
-        printf("Неверная позиция! Допустимые позиции: 1-%d\n", stack->size);
+        printf("Неверная позиция ! Допустимые позиции:1-%d\n", stack->size);
         return;
     }
 
