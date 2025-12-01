@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/LeoHu/LABs-Nataly/Nataly_laba3",
-      "program": "c:/Users/LeoHu/LABs-Nataly/Nataly_laba3/build/Debug/outDebug",
+      "cwd": "c:/Users/LeoHu/LABs-Nataly/laba3-1",
+      "program": "c:/Users/LeoHu/LABs-Nataly/laba3-1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
