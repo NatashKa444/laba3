@@ -4,40 +4,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <string.h>
 #include <time.h>
 
-typedef struct Elem
+// Структура элемента стека с информационным и указательным полями
+typedef struct elem
 {
-    int data;
-    struct Elem *next;
+    int inf;           // Информационное поле - хранит данные
+    struct elem *link; // Указательное поле - ссылка на следующий элемент
 } Elem;
 
+// Структура стека
 typedef struct
 {
-    Elem *top;
-    int size;
+    Elem *top; // Указатель на вершину стека
+    int size;  // Количество элементов в стеке
 } Stack;
 
+// Базовые операции стека
 Stack *createStack();
 void push(Stack *stack, int data);
 int pop(Stack *stack);
 void printStack(Stack *stack);
 void freeStack(Stack *stack);
-int getStackSize(Stack *stack);
-void insertAtPosition(Stack *stack, int position, int data);
-void deleteAtPosition(Stack *stack, int position);
-void editAtPosition(Stack *stack, int position, int newData);
 
-// чуть позже
-// void insertionSort(Stack* stack);
-// Stack* mergeSort(Stack* stack);
-// void measureSortTime(Stack* stack, const char* sortType, const char* filename);
-// void saveStackToFile(Stack* stack, const char* filename);
-// Stack* loadStackFromFile(const char* filename);
-// void generateTestFiles();
+// Сортировки
+void insertionSort(Stack *stack);
+Stack *mergeSort(Stack *stack);
 
-void clearInputBuffer();
-int askToContinue();
+// Работа с файлами
+void saveStackToFile(Stack *stack, const char *filename);
+Stack *loadStackFromFile(const char *filename);
+void generateTestFile(int size, const char *filename);
+
+// Сравнение сортировок
+void compareSorts();
 
 #endif

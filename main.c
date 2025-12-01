@@ -1,44 +1,129 @@
 #include "stack.h"
 
+// Очистка буфера ввода
+void clearInputBuffer()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
+}
+
+// Ввод последовательности чисел
+Stack *inputStack()
+{
+    char input[1000];
+    printf("Введите последовательность чисел через пробел: ");
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+    {
+        printf("Ошибка ввода!\n");
+        return NULL;
+    }
+
+    Stack *stack = createStack();
+    char *token = input;
+    int numbersCount = 0;
+
+    // Разбираем введенную строку на числа
+    while (*token)
+    {
+        if (*token >= '0' && *token <= '9')
+        {
+            int num = 0;
+            while (*token >= '0' && *token <= '9')
+            {
+                num = num * 10 + (*token - '0');
+                token++;
+            }
+            push(stack, num);
+            numbersCount++;
+        }
+        else
+        {
+            token++;
+        }
+    }
+
+    if (numbersCount == 0)
+    {
+        printf("Ошибка: не введено ни одного числа!\n");
+        freeStack(stack);
+        return NULL;
+    }
+
+    printf("Создан стек из %d элементов\n", numbersCount);
+    return stack;
+}
+
 int main(int argc, char *argv[])
 {
     setlocale(LC_ALL, "Russian");
 
-    if (argc == 3)
+    // Режим --file
+    if (argc == 3 && strcmp(argv[1], "--file") == 0)
     {
-        // if (argv[1][0] == '-' && argv[1][1] == '-' && argv[1][2] == 'f') {
-        //     Stack* stack = loadStackFromFile(argv[2]);
-        //     if (stack != NULL) {
-        //         printf("Исходный ряд: ");
-        //         printStack(stack);
-        //         Stack* sorted = mergeSort(stack);
-        //         printf("Отсортированный ряд: ");
-        //         printStack(sorted);
+        Stack *stack = loadStackFromFile(argv[2]);
+        if (stack != NULL)
+        {
+            printf("Исходный ряд: ");
+            printStack(stack);
 
-        //         saveStackToFile(sorted, "sorted.txt");
+            // Сохраняем исходный ряд
+            saveStackToFile(stack, "input.txt");
 
-        //         freeStack(stack);
-        //         freeStack(sorted);
-        //     }
-        //     return 0;
-        // }
+            // Сортируем прямым включением
+            Stack *sorted = createStack();
+            Elem *current = stack->top;
+            while (current != NULL)
+            {
+                push(sorted, current->inf); // Копируем данные
+                current = current->link;    // Переходим по ссылкам
+            }
+            insertionSort(sorted);
+
+            printf("Отсортированный ряд: ");
+            printStack(sorted);
+
+            // Сохраняем отсортированный ряд
+            saveStackToFile(sorted, "output.txt");
+
+            freeStack(stack);
+            freeStack(sorted);
+        }
+        return 0;
     }
-    Stack *stack = createStack();
-    int choice;
+
+    // Основной режим - ввод последовательности
+    Stack *stack = NULL;
+
+    printf("=== ЛАБОРАТОРНАЯ РАБОТА: СОРТИРОВКА СТЕКА ===\n\n");
+
+    // Ввод последовательности
+    while (stack == NULL)
+    {
+        stack = inputStack();
+        if (stack == NULL)
+        {
+            printf("Попробуйте еще раз.\n\n");
+        }
+    }
+
+    int choice, data;
+
     do
     {
         printf("\n=== МЕНЮ ===\n");
-        printf("1. Ввести числа\n");
-        printf("2. Вывести стек\n");
-        printf("3. Добавить элемент\n");
-        printf("4. Удалить элемент\n");
-        printf("5. Редактировать элемент\n");
-        printf("6. Сортировка включением\n");
-        printf("7. Сортировка слиянием\n");
-        printf("8. Сохранить в файл\n");
-        printf("9. Загрузить из файла\n");
+        printf("1. Вывести стек\n");
+        printf("2. Добавить элемент\n");
+        printf("3. Удалить элемент\n");
+        printf("4. Сортировка прямым включением\n");
+        printf("5. Сортировка слиянием\n");
+        printf("6. Сохранить стек в файл\n");
+        printf("7. Загрузить стек из файла\n");
+        printf("8. Сравнить методы сортировки\n");
         printf("0. Выход\n");
         printf("Выберите: ");
+
         if (scanf("%d", &choice) != 1)
         {
             printf("Ошибка ввода!\n");
@@ -46,61 +131,47 @@ int main(int argc, char *argv[])
             continue;
         }
         clearInputBuffer();
+
         switch (choice)
         {
         case 1:
-        {
-            printf("Введите числа через пробел: ");
-            char input[1000];
-            fgets(input, 1000, stdin);
-
-            freeStack(stack);
-            stack = createStack();
-
-            char *token = input;
-            while (*token)
-            {
-                if (*token >= '0' && *token <= '9')
-                {
-                    int num = 0;
-                    while (*token >= '0' && *token <= '9')
-                    {
-                        num = num * 10 + (*token - '0');
-                        token++;
-                    }
-                    push(stack, num);
-                }
-                else
-                {
-                    token++;
-                }
-            }
-            printf("Создан стек из %d элементов\n", stack->size);
-            break;
-        }
-
-        case 2:
+            printf("Текущий стек: ");
             printStack(stack);
             break;
 
-        case 3:
-        {
-            int data;
-            printf("Введите число: ");
+        case 2:
+            printf("Введите число для добавления: ");
             if (scanf("%d", &data) == 1)
             {
                 push(stack, data);
-                printf("Элемент %d добавлен\n", data);
+                printf("Элемент %d добавлен в стек!\n", data);
+            }
+            else
+            {
+                printf("Ошибка ввода!\n");
             }
             clearInputBuffer();
             break;
-        }
+
+        case 3:
+            data = pop(stack);
+            if (data != -1)
+            {
+                printf("Элемент %d удален из стека!\n", data);
+            }
+            else
+            {
+                printf("Стек пуст!\n");
+            }
+            break;
 
         case 4:
             if (stack->size > 0)
             {
-                int data = pop(stack);
-                printf("Удален элемент: %d\n", data);
+                insertionSort(stack);
+                printf("Стек отсортирован методом прямого включения!\n");
+                printf("Результат: ");
+                printStack(stack);
             }
             else
             {
@@ -109,70 +180,56 @@ int main(int argc, char *argv[])
             break;
 
         case 5:
-        {
-            int position, newData;
-            printf("Введите позицию (1-%d): ", stack->size);
-            if (scanf("%d", &position) == 1)
+            if (stack->size > 0)
             {
-                printf("Введите новое значение: ");
-                if (scanf("%d", &newData) == 1)
-                {
-                    editAtPosition(stack, position, newData);
-                }
+                Stack *sorted = mergeSort(stack);
+                freeStack(stack);
+                stack = sorted;
+                printf("Стек отсортирован методом слияния!\n");
+                printf("Результат: ");
+                printStack(stack);
             }
-            clearInputBuffer();
+            else
+            {
+                printf("Стек пуст!\n");
+            }
+            break;
+
+        case 6:
+            if (stack->size > 0)
+            {
+                saveStackToFile(stack, "stack.txt");
+            }
+            else
+            {
+                printf("Стек пуст!\n");
+            }
+            break;
+
+        case 7:
+        {
+            Stack *loaded = loadStackFromFile("stack.txt");
+            if (loaded != NULL)
+            {
+                freeStack(stack);
+                stack = loaded;
+            }
             break;
         }
 
-        case 6:
-            // if (stack->size > 0) {
-            //     insertionSort(stack);
-            //     printf("Стек отсортирован!\n");
-            //     printStack(stack);
-            // } else {
-            //     printf("Стек пуст!\n");
-            // }
-            // break;
-
-        case 7:
-            // if (stack->size > 0) {
-            //     Stack* sorted = mergeSort(stack);
-            //     freeStack(stack);
-            //     stack = sorted;
-            //     printf("Стек отсортирован!\n");
-            //     printStack(stack);
-            // } else {
-            //     printf("Стек пуст!\n");
-            // }
-            // break;
-
         case 8:
-            // if (stack->size > 0) {
-            //     saveStackToFile(stack, "stack.txt");
-            // } else {
-            //     printf("Стек пуст!\n");
-            // }
-            // break;
-
-        case 9:
-        {
-            // Stack* loaded = loadStackFromFile("stack.txt");
-            // if (loaded != NULL) {
-            //     freeStack(stack);
-            //     stack = loaded;
-            // }
-            // break;
-        }
+            compareSorts();
+            break;
 
         case 0:
-            printf("Выход\n");
+            printf("Выход из программы\n");
             break;
 
         default:
             printf("Неверный выбор!\n");
         }
 
-    } while (choice != 0 && askToContinue());
+    } while (choice != 0);
 
     freeStack(stack);
     return 0;

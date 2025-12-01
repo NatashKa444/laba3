@@ -1,60 +1,46 @@
 #include "stack.h"
 
-Stack *createStack()
+// ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜ ˜ ˜˜˜˜
+void push(Elem **top, int value)
 {
-    Stack *stack = (Stack *)malloc(sizeof(Stack));
-    if (stack == NULL)
-    {
-        printf("ÐžÑˆÐ¸Ð±ÐºÐ° Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ñ Ð¿Ð°Ð¼ÑÑ‚Ð¸ Ð´Ð»Ñ ÑÑ‚ÐµÐºÐ°!\n");
-        exit(1);
-    }
-    stack->top = NULL;
-    stack->size = 0;
-    return stack;
+    Elem *p = (Elem *)malloc(sizeof(Elem)); // ˜˜˜˜˜˜˜ ˜˜˜˜˜ ˜˜˜˜˜˜˜
+    p->data = value;                        // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜
+    p->next = *top;                         // ˜˜˜˜˜˜˜˜˜ ˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜
+    *top = p;                               // ˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜
 }
 
-void push(Stack *stack, int data)
+// ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜ ˜˜ ˜˜˜˜˜
+int pop(Elem **top)
 {
-    Elem *newElem = (Elem *)malloc(sizeof(Elem));
-    if (newElem == NULL)
-    {
-        printf("ÐžÑˆÐ¸Ð±ÐºÐ° Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ñ Ð¿Ð°Ð¼ÑÑ‚Ð¸ Ð´Ð»Ñ Ð½Ð¾Ð²Ð¾Ð³Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°!\n");
-        exit(1);
-    }
+    if (*top == NULL)
+        return -1; // ˜˜˜˜ ˜˜˜˜ ˜˜˜˜
 
-    newElem->data = data;
-    newElem->next = stack->top;
-    stack->top = newElem;
-    stack->size++;
+    int val = (*top)->data; // ˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜
+    Elem *p = *top;         // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜˜˜
+    *top = (*top)->next;    // ˜˜˜˜˜˜˜˜˜ ˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜
+    free(p);                // ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜
+    return val;             // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜
 }
 
-int pop(Stack *stack)
+// ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜
+int is_empty(Elem *top)
 {
-    if (stack->top == NULL)
-    {
-        printf("Ð¡Ñ‚ÐµÐº Ð¿ÑƒÑÑ‚!\n");
-        return -1;
-    }
-
-    Elem *temp = stack->top;
-    int data = temp->data;
-    stack->top = temp->next;
-    free(temp);
-    stack->size--;
-
-    return data;
+    return top == NULL;
 }
 
-void printStack(Stack *stack)
+// ˜˜˜˜˜˜˜ ˜˜˜˜˜ ˜˜˜˜˜
+void clear_stack(Elem **top)
 {
-    if (stack->top == NULL)
+    while (*top != NULL)
     {
-        printf("Ð¡Ñ‚ÐµÐº Ð¿ÑƒÑÑ‚.\n");
-        return;
+        pop(top);
     }
+}
 
-    printf("Ð¡Ñ‚ÐµÐº (%d ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²): ", stack->size);
-    Elem *current = stack->top;
+// ˜˜˜˜˜˜ ˜˜˜˜˜
+void print_stack(Elem *top)
+{
+    Elem *current = top;
     while (current != NULL)
     {
         printf("%d ", current->data);
@@ -63,107 +49,15 @@ void printStack(Stack *stack)
     printf("\n");
 }
 
-void insertAtPosition(Stack *stack, int position, int data)
+// ˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜
+int stack_size(Elem *top)
 {
-    if (position < 1 || position > stack->size + 1)
+    int count = 0;
+    Elem *current = top;
+    while (current != NULL)
     {
-        printf("ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ! Ð”Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ñ‹Ðµ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸: 1-%d\n", stack->size + 1);
-        return;
-    }
-
-    if (position == 1)
-    {
-        push(stack, data);
-        return;
-    }
-
-    Elem *current = stack->top;
-    for (int i = 1; i < position - 1; i++)
-    {
+        count++;
         current = current->next;
     }
-
-    Elem *newElem = (Elem *)malloc(sizeof(Elem));
-    newElem->data = data;
-    newElem->next = current->next;
-    current->next = newElem;
-    stack->size++;
-}
-
-void deleteAtPosition(Stack *stack, int position)
-{
-    if (position < 1 || position > stack->size)
-    {
-        printf("ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ ! Ð”Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ñ‹Ðµ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸:1-%d\n", stack->size);
-        return;
-    }
-
-    if (position == 1)
-    {
-        pop(stack);
-        return;
-    }
-
-    Elem *current = stack->top;
-    for (int i = 1; i < position - 1; i++)
-    {
-        current = current->next;
-    }
-
-    Elem *toDelete = current->next;
-    current->next = toDelete->next;
-    free(toDelete);
-    stack->size--;
-}
-
-void editAtPosition(Stack *stack, int position, int newData)
-{
-    if (position < 1 || position > stack->size)
-    {
-        printf("ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ! Ð”Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ñ‹Ðµ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸: 1-%d\n", stack->size);
-        return;
-    }
-
-    Elem *current = stack->top;
-    for (int i = 1; i < position; i++)
-    {
-        current = current->next;
-    }
-
-    current->data = newData;
-    printf("Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚ Ð½Ð° Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸ %d Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½ Ð½Ð° %d\n", position, newData);
-}
-
-void freeStack(Stack *stack)
-{
-    while (stack->top != NULL)
-    {
-        pop(stack);
-    }
-    free(stack);
-}
-
-int getStackSize(Stack *stack)
-{
-    return stack->size;
-}
-
-void clearInputBuffer()
-{
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF)
-        ;
-}
-
-int askToContinue()
-{
-    char answer;
-    printf("\nÐ¥Ð¾Ñ‚Ð¸Ñ‚Ðµ Ð²Ñ‹Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÑŒ ÐµÑ‰Ðµ Ð¾Ð´Ð½Ñƒ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸ÑŽ? (1 - Ð´Ð°, 0 - Ð½ÐµÑ‚): ");
-    if (scanf(" %c", &answer) != 1)
-    {
-        clearInputBuffer();
-        return 0;
-    }
-    clearInputBuffer();
-    return answer == '1';
+    return count;
 }
