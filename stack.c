@@ -1,34 +1,34 @@
 #include "stack.h"
 
-//    
+// Δξαΰβλενθε ύλεμενςΰ β ρςεκ
 void push(Elem **top, int value)
 {
-    Elem *p = (Elem *)malloc(sizeof(Elem)); //   
-    p->data = value;                        //  
-    p->next = *top;                         //    
-    *top = p;                               //   
+    Elem *p = (Elem *)malloc(sizeof(Elem)); // Ρξηδΰεμ νξβϋι ύλεμενς
+    p->data = value;                        // Ηΰοθρϋβΰεμ χθρλξ
+    p->next = *top;                         // Ρβÿηϋβΰεμ ρ οπεδϋδσωθμ ύλεμενςξμ
+    *top = p;                               // Ξανξβλÿεμ βεπψθνσ ρςεκΰ
 }
 
-//    
+// Σδΰλενθε ύλεμενςΰ θη ρςεκΰ
 int pop(Elem **top)
 {
     if (*top == NULL)
-        return -1; //   
+        return -1; // Ερλθ ρςεκ οσρς
 
-    int val = (*top)->data; //  
-    Elem *p = *top;         //    
-    *top = (*top)->next;    //    
-    free(p);                //  
-    return val;             //  
+    int val = (*top)->data; // Ρξυπΰνÿεμ δΰννϋε
+    Elem *p = *top;         // Ηΰοξμθνΰεμ ύλεμενς δλÿ σδΰλενθÿ
+    *top = (*top)->next;    // Οεπευξδθμ κ ρλεδσώωεμσ ύλεμενςσ
+    free(p);                // Ξρβξαξζδΰεμ οΰμÿςό
+    return val;             // Βξηβπΰωΰεμ ηνΰχενθε
 }
 
-//   
+// Οπξβεπκΰ οσρςξςϋ ρςεκΰ
 int is_empty(Elem *top)
 {
     return top == NULL;
 }
 
-//   
+// Ξχθρςκΰ βρεγξ ρςεκΰ
 void clear_stack(Elem **top)
 {
     while (*top != NULL)
@@ -37,7 +37,7 @@ void clear_stack(Elem **top)
     }
 }
 
-//  
+// Οεχΰςό ρςεκΰ
 void print_stack(Elem *top)
 {
     Elem *current = top;
@@ -49,7 +49,7 @@ void print_stack(Elem *top)
     printf("\n");
 }
 
-//   
+// Οξδρχες πΰημεπΰ ρςεκΰ
 int stack_size(Elem *top)
 {
     int count = 0;
