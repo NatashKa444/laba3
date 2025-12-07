@@ -4,9 +4,10 @@
 #include "stack.h"
 #include <time.h>
 
-// Функции сортировки
-void insertion_sort_stack(Elem **top); // Сортировка прямым включением
-void merge_sort_stack(Elem **top);     // Сортировка слиянием
-void compare_sorting_methods();        // Сравнение методов
+void insertion_sort_stack(Elem **Top);
+void merge_sort_stack(Elem **Top);
+void compare_sorting_methods();
+
+void sort_file(const char *filename);
 
 #endif

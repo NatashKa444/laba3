@@ -1,126 +1,83 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <string.h>
 #include "stack.h"
 #include "sorting.h"
 
-// Функция для ввода чисел и создания стека
-void input_numbers(Elem **top)
-{
-    printf("Введите числа через пробел: ");
-
-    char input[1000];
-    fgets(input, sizeof(input), stdin);
-
-    char *token = strtok(input, " ");
-    while (token != NULL)
-    {
-        int num = atoi(token);
-        push(top, num);
-        token = strtok(NULL, " ");
-    }
-}
-
-// Обработка аргументов командной строки
-void handle_command_line_args(int argc, char *argv[])
-{
-    if (argc == 3 && strcmp(argv[1], "--file") == 0)
-    {
-        printf("Режим работы с файлом: %s\n", argv[2]);
-
-        Elem *top = NULL;
-
-        // Читаем числа из файла
-        FILE *file = fopen(argv[2], "r");
-        if (file == NULL)
-        {
-            printf("Ошибка открытия файла %s\n", argv[2]);
-            return;
-        }
-
-        int num;
-        while (fscanf(file, "%d", &num) == 1)
-        {
-            push(&top, num);
-        }
-        fclose(file);
-
-        printf("Исходный стек: ");
-        print_stack(top);
-
-        // Сортируем копию стека
-        Elem *sorted = copy_stack(top);
-        insertion_sort_stack(&sorted);
-
-        printf("Отсортированный стек: ");
-        print_stack(sorted);
-
-        // Записываем в файлы
-        write_stack_to_file(top, "original.txt");
-        write_stack_to_file(sorted, "sorted.txt");
-
-        printf("Исходные данные записаны в 'original.txt'\n");
-        printf("Отсортированные данные записаны в 'sorted.txt'\n");
-
-        clear_stack(&top);
-        clear_stack(&sorted);
-    }
-}
-
-// Основное меню
-void show_menu()
-{
-    printf("\n=== МЕНЮ РАБОТЫ СО СТЕКОМ ===\n");
-    printf("1. Ввод чисел и сортировка прямым включением\n");
-    printf("2. Сортировка слиянием\n");
-    printf("3. Сравнение методов сортировки\n");
-    printf("4. Выход\n");
-    printf("Выберите опцию: ");
-}
-
 int main(int argc, char *argv[])
 {
-    setlocale(LC_ALL, "Russian"); // Русский язык
+    setlocale(LC_ALL, "Russian");
 
-    // Обработка аргументов командной строки
-    if (argc > 1)
+    // Обработка аргументов командной строки (--file)
+    if (argc == 3 && strcmp(argv[1], "--file") == 0)
     {
-        handle_command_line_args(argc, argv);
+        process_file_mode(argv[2]);
         return 0;
     }
 
+    // Обычный режим работы
+    Elem *Top = NULL;
     int choice;
-    Elem *top = NULL;
 
-    // Ввод чисел в начале
-    input_numbers(&top);
-    printf("Создан стек из %d элементов: ", stack_size(top));
-    print_stack(top);
+    // Ввод чисел
+    printf("Введите числа через пробел (для завершения введите любой не-число): ");
 
+    int num;
+    while (scanf("%d", &num) == 1)
+    {
+        push(&Top, num);
+    }
+
+    // Очистка буфера
+    while (getchar() != '\n')
+        ;
+
+    // Если ничего не ввели
+    if (Top == NULL)
+    {
+        printf("Вы не ввели числа! Используются тестовые данные.\n");
+        push(&Top, 5);
+        push(&Top, 2);
+        push(&Top, 8);
+        push(&Top, 1);
+        push(&Top, 9);
+    }
+
+    printf("Создан стек: ");
+    print_stack(Top);
+
+    // Основной цикл
     do
     {
-        show_menu();
+        // Меню прямо в main (без функции)
+        printf("\n=== МЕНЮ РАБОТЫ СО СТЕКОМ ===\n");
+        printf("1. Сортировка прямым включением\n");
+        printf("2. Сортировка слиянием\n");
+        printf("3. Сравнение методов сортировки\n");
+        printf("4. Выход\n");
+        printf("Выберите опцию: ");
+
         scanf("%d", &choice);
-        getchar(); // Очистка буфера
+        while (getchar() != '\n')
+            ; // Очистка буфера
 
         switch (choice)
         {
         case 1:
-        {
             printf("До сортировки: ");
-            print_stack(top);
-            insertion_sort_stack(&top);
+            print_stack(Top);
+            insertion_sort_stack(&Top);
             printf("После сортировки: ");
-            print_stack(top);
+            print_stack(Top);
             break;
-        }
 
         case 2:
             printf("До сортировки: ");
-            print_stack(top);
-            merge_sort_stack(&top);
+            print_stack(Top);
+            merge_sort_stack(&Top);
             printf("После сортировки: ");
-            print_stack(top);
+            print_stack(Top);
             break;
 
         case 3:
@@ -132,9 +89,11 @@ int main(int argc, char *argv[])
             break;
 
         default:
-            printf("Неверный выбор! Попробуйте снова.\n");
+            printf("Неверный выбор! Введите 1-4.\n");
         }
+
     } while (choice != 4);
-    clear_stack(&top);
+
+    clear_stack(&Top);
     return 0;
 }
