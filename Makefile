@@ -1,10 +1,7 @@
 TARGET = program
-
-
 .PHONY: all clean 
 
 all: $(TARGET)
-
 clean:
 	del /Q $(TARGET) *.o
 
