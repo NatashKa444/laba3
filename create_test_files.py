@@ -9,7 +9,7 @@ with open("medium.txt", "w") as f:
     random.shuffle(numbers)  # перемешиваем
     for i in range(0, 100, 10):
         line = " ".join(str(x) for x in numbers[i : i + 10])
-        f.write(line + "\n")
+        f.write(' '.join(str(x) for x in numbers))
 
 with open("large.txt", "w") as f:
     numbers = list(x for x in range(1, 1001))

@@ -1,63 +1,57 @@
-
 #include "stack.h"
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
-void push(Elem **top, int value)
+
+// Добавление элемента в стек
+void push(Elem **Top, int value)
 {
-    Elem *p = (Elem *)malloc(sizeof(Elem)); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    p->data = value;                        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-    p->next = *top;                         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    *top = p;                               // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    Elem *p = (Elem *)malloc(sizeof(Elem));
+    p->inf = value;
+    p->link = *Top;
+    *Top = p;
 }
 
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-int pop(Elem **top)
+// Удаление элемента из стека
+int pop(Elem **Top)
 {
-    if (*top == NULL)
-        return -1; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    if (*Top == NULL)
+        return -1;
 
-    int val = (*top)->data; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-    Elem *p = *top;         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    *top = (*top)->next;    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-    free(p);                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-    return val;             // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    int val = (*Top)->inf;
+    Elem *p = *Top;
+    *Top = (*Top)->link;
+    free(p);
+    return val;
 }
 
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-int is_empty(Elem *top)
+// Печать стека
+void print_stack(Elem *Top)
 {
-    return top == NULL;
-}
-
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-void clear_stack(Elem **top)
-{
-    while (*top != NULL)
-    {
-        pop(top);
-    }
-}
-
-// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-void print_stack(Elem *top)
-{
-    Elem *current = top;
+    Elem *current = Top;
     while (current != NULL)
     {
-        printf("%d ", current->data);
-        current = current->next;
+        printf("%d ", current->inf);
+        current = current->link;
     }
     printf("\n");
 }
 
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-int stack_size(Elem *top)
+// Размер стека
+int stack_size(Elem *Top)
 {
     int count = 0;
-    Elem *current = top;
+    Elem *current = Top;
     while (current != NULL)
     {
         count++;
-        current = current->next;
+        current = current->link;
     }
     return count;
+}
+
+// Очистка стека
+void clear_stack(Elem **Top)
+{
+    while (*Top != NULL)
+    {
+        pop(Top);
+    }
 }

@@ -1,80 +1,76 @@
 #include "sorting.h"
-#include <stdlib.h> // для system()
+#include <stdlib.h>
 
-// Сортировка прямым включением (простая)
-void insertion_sort_stack(Elem **top)
+// Сортировка прямым включением
+void insertion_sort_stack(Elem **Top)
 {
-    if (*top == NULL || (*top)->next == NULL)
+    if (*Top == NULL || (*Top)->link == NULL)
         return;
 
-    Elem *sorted = NULL; // Второй стек для сортировки
+    Elem *sorted = NULL;
 
-    while (*top != NULL)
+    while (*Top != NULL)
     {
-        int current = pop(top); // Берем элемент из исходного стека
+        int current = pop(Top);
 
-        // Находим правильное место в отсортированном стеке
-        while (sorted != NULL && sorted->data > current)
+        while (sorted != NULL && sorted->inf > current)
         {
-            push(top, pop(&sorted));
+            push(Top, pop(&sorted));
         }
 
-        push(&sorted, current); // Добавляем в отсортированный стек
+        push(&sorted, current);
     }
 
-    // Возвращаем отсортированные элементы обратно
     while (sorted != NULL)
     {
-        push(top, pop(&sorted));
+        push(Top, pop(&sorted));
     }
 }
 
 // Сортировка слиянием (упрощенная)
-void merge_sort_stack(Elem **top)
+void merge_sort_stack(Elem **Top)
 {
-    if (*top == NULL || (*top)->next == NULL)
+    if (*Top == NULL || (*Top)->link == NULL)
         return;
 
-    // Разделяем стек на две части
-    Elem *slow = *top;
-    Elem *fast = (*top)->next;
+    Elem *slow = *Top;
+    Elem *fast = (*Top)->link;
 
-    while (fast != NULL && fast->next != NULL)
+    while (fast != NULL && fast->link != NULL)
     {
-        slow = slow->next;
-        fast = fast->next->next;
+        slow = slow->link;
+        fast = fast->link->link;
     }
 
-    Elem *left = *top;
-    Elem *right = slow->next;
-    slow->next = NULL;
+    Elem *left = *Top;
+    Elem *right = slow->link;
+    slow->link = NULL;
 
-    // Сортируем каждую часть
     merge_sort_stack(&left);
     merge_sort_stack(&right);
 
-    // Сливаем отсортированные части
     Elem *result = NULL;
     Elem **tail = &result;
 
     while (left != NULL && right != NULL)
     {
-        if (left->data <= right->data)
+        if (left->inf <= right->inf)
         {
             *tail = left;
-            left = left->next;
+            left = left->link;
         }
         else
         {
             *tail = right;
-            right = right->next;
+            right = right->link;
         }
-        tail = &((*tail)->next);
+        tail = &((*tail)->link);
     }
 
     *tail = (left != NULL) ? left : right;
-    *top = result;
+    *Top = result;
 }
+
 // Сравнение методов сортировки
 void compare_sorting_methods()
 {
@@ -82,38 +78,25 @@ void compare_sorting_methods()
     printf("Размер | Вставками(с) | Слиянием(с)\n");
     printf("-----------------------------------\n");
 
-    // Используем готовые тестовые файлы
     char *files[] = {"small.txt", "medium.txt", "large.txt"};
     int sizes[] = {10, 100, 1000};
 
-    // ИСПРАВЛЕНО: Открываем файл для записи (перезаписываем)
     FILE *results = fopen("results.txt", "w");
-    if (results == NULL)
-    {
-        printf("Ошибка создания файла results.txt\n");
-        return;
-    }
-
-    // Записываем заголовок
     fprintf(results, "Size Insertion Merge\n");
 
     for (int i = 0; i < 3; i++)
     {
-        // Читаем числа из готового файла
         FILE *file = fopen(files[i], "r");
         if (file == NULL)
         {
             printf("Ошибка открытия файла %s\n", files[i]);
-            fclose(results);
-            return; // тренировочный редактор
+            continue;
         }
 
-        // Создаем два одинаковых стека для тестирования
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
 
-        // Читаем все числа из готового файла
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
@@ -121,13 +104,11 @@ void compare_sorting_methods()
         }
         fclose(file);
 
-        // Тестируем сортировку вставками
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
         double time1 = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        // Тестируем сортировку слиянием
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
@@ -142,6 +123,7 @@ void compare_sorting_methods()
     }
 
     fclose(results);
+
     printf("\nЗапускаем построение графика...\n");
     system("python graph.py");
 }
