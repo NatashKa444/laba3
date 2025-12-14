@@ -9,10 +9,36 @@ int main(int argc, char *argv[])
 {
     setlocale(LC_ALL, "Russian");
 
-    // Обработка аргументов командной строки (--file)
+    // Запуск с аргументом --file filename.txt
     if (argc == 3 && strcmp(argv[1], "--file") == 0)
     {
-        process_file_mode(argv[2]);
+        printf("Режим работы с файлом: %s\n", argv[2]);
+        printf("Введите числа через пробел (для завершения введите любой не-число): ");
+        int num;
+        Elem *original_stack = NULL;
+        while (scanf("%d", &num) == 1)
+        {
+            push(&original_stack, num);
+        }
+        while (getchar() != '\n')
+            ;
+        if (original_stack == NULL)
+        {
+            return 0;
+        }
+        printf("Введенный ряд чисел: ");
+        print_stack(original_stack);
+
+        write_to_file(original_stack, argv[2]);
+        printf("Исходные данные записаны в %s\n", argv[2]);
+
+        insertion_sort_stack(&original_stack);
+        printf("Отсортированный ряд: ");
+        print_stack(original_stack);
+        append_to_file(original_stack, argv[2]);
+        printf("Отсортированные данные дописаны в %s\n", argv[2]);
+
+        clear_stack(&original_stack);
         return 0;
     }
 
@@ -20,7 +46,6 @@ int main(int argc, char *argv[])
     Elem *Top = NULL;
     int choice;
 
-    // Ввод чисел
     printf("Введите числа через пробел (для завершения введите любой не-число): ");
 
     int num;

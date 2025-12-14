@@ -8,6 +8,4 @@ void insertion_sort_stack(Elem **Top);
 void merge_sort_stack(Elem **Top);
 void compare_sorting_methods();
 
-void sort_file(const char *filename);
-
 #endif

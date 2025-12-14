@@ -1,8 +1,9 @@
 #include "sorting.h"
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
-// РЎРѕСЂС‚РёСЂРѕРІРєР° РїСЂСЏРјС‹Рј РІРєР»СЋС‡РµРЅРёРµРј
+// Сортировка прямым включением
 void insertion_sort_stack(Elem **Top)
 {
     if (*Top == NULL || (*Top)->link == NULL)
@@ -28,13 +29,13 @@ void insertion_sort_stack(Elem **Top)
     }
 }
 
-// Р¤СѓРЅРєС†РёСЏ СЃР»РёСЏРЅРёСЏ РґРІСѓС… РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹С… СЃС‚РµРєРѕРІ
+// Функция слияния двух отсортированных стеков
 Elem *merge(Elem *left, Elem *right)
 {
     Elem *result = NULL;
     Elem *temp_stack = NULL;
 
-    // РЎР»РёРІР°РµРј РїРѕРєР° РѕР±Р° СЃС‚РµРєР° РЅРµ РїСѓСЃС‚С‹
+    // Сливаем пока оба стека не пусты
     while (left != NULL && right != NULL)
     {
         if (left->inf <= right->inf)
@@ -49,21 +50,21 @@ Elem *merge(Elem *left, Elem *right)
         }
     }
 
-    // Р”РѕР±Р°РІР»СЏРµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ СЌР»РµРјРµРЅС‚С‹ РёР· Р»РµРІРѕРіРѕ СЃС‚РµРєР°
+    // Добавляем оставшиеся элементы из левого стека
     while (left != NULL)
     {
         push(&temp_stack, left->inf);
         left = left->link;
     }
 
-    // Р”РѕР±Р°РІР»СЏРµРј РѕСЃС‚Р°РІС€РёРµСЃСЏ СЌР»РµРјРµРЅС‚С‹ РёР· РїСЂР°РІРѕРіРѕ СЃС‚РµРєР°
+    // Добавляем оставшиеся элементы из правого стека
     while (right != NULL)
     {
         push(&temp_stack, right->inf);
         right = right->link;
     }
 
-    // Р Р°Р·РІРѕСЂР°С‡РёРІР°РµРј РІСЂРµРјРµРЅРЅС‹Р№ СЃС‚РµРє С‡С‚РѕР±С‹ РїРѕР»СѓС‡РёС‚СЊ РїСЂР°РІРёР»СЊРЅС‹Р№ РїРѕСЂСЏРґРѕРє
+    // Разворачиваем временный стек чтобы получить правильный порядок
     while (temp_stack != NULL)
     {
         push(&result, pop(&temp_stack));
@@ -72,7 +73,7 @@ Elem *merge(Elem *left, Elem *right)
     return result;
 }
 
-// Р Р°Р·РґРµР»РµРЅРёРµ СЃС‚РµРєР° РЅР° РґРІРµ С‡Р°СЃС‚Рё
+// Разделение стека на две части
 void split_stack(Elem *Top, Elem **left, Elem **right)
 {
     if (Top == NULL || Top->link == NULL)
@@ -82,11 +83,11 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
         return;
     }
 
-    // РСЃРїРѕР»СЊР·СѓРµРј РјРµС‚РѕРґ "С‡РµСЂРµРїР°С…Р° Рё Р·Р°СЏС†" РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ СЃРµСЂРµРґРёРЅС‹
+    // Используем метод "черепаха и заяц" для нахождения середины
     Elem *slow = Top;
     Elem *fast = Top->link;
 
-    // fast РґРІРёРіР°РµС‚СЃСЏ РІ 2 СЂР°Р·Р° Р±С‹СЃС‚СЂРµРµ slow
+    // fast двигается в 2 раза быстрее slow
     while (fast != NULL)
     {
         fast = fast->link;
@@ -97,153 +98,64 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
         }
     }
 
-    // slow СѓРєР°Р·С‹РІР°РµС‚ РЅР° СЃРµСЂРµРґРёРЅСѓ
+    // slow указывает на середину
     *left = Top;
     *right = slow->link;
-    slow->link = NULL; // Р Р°Р·СЂС‹РІР°РµРј СЃРІСЏР·СЊ РјРµР¶РґСѓ РїРѕР»РѕРІРёРЅР°РјРё
+    slow->link = NULL; // Разрываем связь между половинами
 }
 
-// РЎРѕСЂС‚РёСЂРѕРІРєР° СЃР»РёСЏРЅРёРµРј РЅР° СЃС‚РµРєРµ (СЂРµРєСѓСЂСЃРёРІРЅР°СЏ)
+// Сортировка слиянием на стеке (рекурсивная)
 void merge_sort_stack(Elem **Top)
 {
     if (*Top == NULL || (*Top)->link == NULL)
     {
-        return; // Р‘Р°Р·РѕРІС‹Р№ СЃР»СѓС‡Р°Р№: СЃС‚РµРє РїСѓСЃС‚ РёР»Рё СЃРѕРґРµСЂР¶РёС‚ РѕРґРёРЅ СЌР»РµРјРµРЅС‚
+        return; // Базовый случай: стек пуст или содержит один элемент
     }
 
     Elem *left = NULL;
     Elem *right = NULL;
 
-    // Р Р°Р·РґРµР»СЏРµРј СЃС‚РµРє РЅР° РґРІРµ С‡Р°СЃС‚Рё
+    // Разделяем стек на две части
     split_stack(*Top, &left, &right);
 
-    // Р РµРєСѓСЂСЃРёРІРЅРѕ СЃРѕСЂС‚РёСЂСѓРµРј РєР°Р¶РґСѓСЋ С‡Р°СЃС‚СЊ
+    // Рекурсивно сортируем каждую часть
     merge_sort_stack(&left);
     merge_sort_stack(&right);
 
-    // РЎР»РёРІР°РµРј РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Рµ С‡Р°СЃС‚Рё
+    // Сливаем отсортированные части
     *Top = merge(left, right);
 }
 
-// Р¤СѓРЅРєС†РёСЏ СЃРѕСЂС‚РёСЂРѕРІРєРё С„Р°Р№Р»Р° (Рї.2 Р·Р°РґР°РЅРёСЏ) - Р‘Р•Р— РњРђРЎРЎРР’РћР’
-void sort_file(const char *filename)
-{
-    printf("\nРЎРѕСЂС‚РёСЂРѕРІРєР° С„Р°Р№Р»Р° %s:\n", filename);
-
-    // Р§РёС‚Р°РµРј С‡РёСЃР»Р° РёР· С„Р°Р№Р»Р° РІ СЃС‚РµРє
-    Elem *Top = NULL;
-    FILE *file = fopen(filename, "r");
-    if (file == NULL)
-    {
-        printf("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° %s\n", filename);
-        return;
-    }
-
-    int num;
-    while (fscanf(file, "%d", &num) == 1)
-    {
-        push(&Top, num);
-    }
-    fclose(file);
-
-    if (Top == NULL)
-    {
-        printf("Р¤Р°Р№Р» РїСѓСЃС‚!\n");
-        return;
-    }
-
-    // РЎРѕСЂС‚РёСЂСѓРµРј СЃС‚РµРє РјРµС‚РѕРґРѕРј РїСЂСЏРјРѕРіРѕ РІРєР»СЋС‡РµРЅРёСЏ
-    printf("РЎРѕСЂС‚РёСЂРѕРІРєР° РїСЂСЏРјС‹Рј РІРєР»СЋС‡РµРЅРёРµРј...\n");
-    insertion_sort_stack(&Top);
-
-    // РЎРѕР·РґР°РµРј РёРјСЏ РґР»СЏ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р° (Р±РµР· РјР°СЃСЃРёРІР°)
-    // РџСЂРѕСЃС‚Рѕ РёСЃРїРѕР»СЊР·СѓРµРј С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ РєР°Рє РІ Р·Р°РґР°РЅРёРё
-    const char *output_filename = "output.txt";
-
-    // РЎРѕС…СЂР°РЅСЏРµРј РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ СЃС‚РµРє РІ С„Р°Р№Р»
-    FILE *output_file = fopen(output_filename, "w");
-    if (output_file == NULL)
-    {
-        printf("РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° %s\n", output_filename);
-        clear_stack(&Top);
-        return;
-    }
-
-    Elem *current = Top;
-    while (current != NULL)
-    {
-        fprintf(output_file, "%d ", current->inf);
-        current = current->link;
-    }
-    fclose(output_file);
-
-    printf("РћС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ СЂСЏРґ Р·Р°РїРёСЃР°РЅ РІ %s\n", output_filename);
-
-    clear_stack(&Top);
-}
-
-// РЎСЂР°РІРЅРµРЅРёРµ РјРµС‚РѕРґРѕРІ СЃРѕСЂС‚РёСЂРѕРІРєРё - Р‘Р•Р— РњРђРЎРЎРР’РћР’
+// Сравнение методов сортировки
 void compare_sorting_methods()
 {
-    printf("\nРЎСЂР°РІРЅРµРЅРёРµ РјРµС‚РѕРґРѕРІ СЃРѕСЂС‚РёСЂРѕРІРєРё:\n");
-    printf("Р Р°Р·РјРµСЂ | Р’СЃС‚Р°РІРєР°РјРё(СЃ) | РЎР»РёСЏРЅРёРµРј(СЃ)\n");
+    setlocale(LC_ALL, "Russian");
+    printf("\nСравнение методов сортировки:\n");
+    printf("Размер | Вставками(с) | Слиянием(с)\n");
     printf("-----------------------------------\n");
 
-    // Р‘РµР· РјР°СЃСЃРёРІРѕРІ - С‚РµСЃС‚РёСЂСѓРµРј С„Р°Р№Р»С‹ РїРѕ РѕС‚РґРµР»СЊРЅРѕСЃС‚Рё
+    // для сохранения результатов
     FILE *results = fopen("results.txt", "w");
     if (results == NULL)
     {
-        printf("РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° results.txt\n");
+        printf("Ошибка создания файла results.txt\n");
         return;
     }
     fprintf(results, "Size Insertion Merge\n");
 
-    // РўРµСЃС‚РёСЂСѓРµРј small.txt (10 С‡РёСЃРµР»)
-    FILE *file1 = fopen("small.txt", "r");
-    if (file1 != NULL)
+    FILE *file = fopen("smallest.txt", "r"); // (1) 100 чисел
+    if (file != NULL)
     {
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
 
-        while (fscanf(file1, "%d", &num) == 1)
+        while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
-        fclose(file1);
-
-        clock_t start = clock();
-        insertion_sort_stack(&stack1);
-        clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        start = clock();
-        merge_sort_stack(&stack2);
-        end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        printf("%6d | %12.4f | %10.4f\n", 10, time_insertion, time_merge);
-        fprintf(results, "%d %.4f %.4f\n", 10, time_insertion, time_merge);
-
-        clear_stack(&stack1);
-        clear_stack(&stack2);
-    }
-
-    // РўРµСЃС‚РёСЂСѓРµРј medium.txt (100 С‡РёСЃРµР»)
-    FILE *file2 = fopen("medium.txt", "r");
-    if (file2 != NULL)
-    {
-        Elem *stack1 = NULL;
-        Elem *stack2 = NULL;
-        int num;
-
-        while (fscanf(file2, "%d", &num) == 1)
-        {
-            push(&stack1, num);
-            push(&stack2, num);
-        }
-        fclose(file2);
+        fclose(file);
 
         clock_t start = clock();
         insertion_sort_stack(&stack1);
@@ -262,20 +174,50 @@ void compare_sorting_methods()
         clear_stack(&stack2);
     }
 
-    // РўРµСЃС‚РёСЂСѓРµРј large.txt (1000 С‡РёСЃРµР»)
-    FILE *file3 = fopen("large.txt", "r");
-    if (file3 != NULL)
+    file = fopen("small.txt", "r"); // (2) 500 чисел
+    if (file != NULL)
     {
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
 
-        while (fscanf(file3, "%d", &num) == 1)
+        while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
-        fclose(file3);
+        fclose(file);
+
+        clock_t start = clock();
+        insertion_sort_stack(&stack1);
+        clock_t end = clock();
+        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        start = clock();
+        merge_sort_stack(&stack2);
+        end = clock();
+        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        printf("%6d | %12.4f | %10.4f\n", 500, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 500, time_insertion, time_merge);
+
+        clear_stack(&stack1);
+        clear_stack(&stack2);
+    }
+
+    file = fopen("medium.txt", "r"); // (3) 1000 чисел
+    if (file != NULL)
+    {
+        Elem *stack1 = NULL;
+        Elem *stack2 = NULL;
+        int num;
+
+        while (fscanf(file, "%d", &num) == 1)
+        {
+            push(&stack1, num);
+            push(&stack2, num);
+        }
+        fclose(file);
 
         clock_t start = clock();
         insertion_sort_stack(&stack1);
@@ -294,8 +236,70 @@ void compare_sorting_methods()
         clear_stack(&stack2);
     }
 
+    file = fopen("big.txt", "r"); // (4) 5000 чисел
+    if (file != NULL)
+    {
+        Elem *stack1 = NULL;
+        Elem *stack2 = NULL;
+        int num;
+
+        while (fscanf(file, "%d", &num) == 1)
+        {
+            push(&stack1, num);
+            push(&stack2, num);
+        }
+        fclose(file);
+
+        clock_t start = clock();
+        insertion_sort_stack(&stack1);
+        clock_t end = clock();
+        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        start = clock();
+        merge_sort_stack(&stack2);
+        end = clock();
+        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        printf("%6d | %12.4f | %10.4f\n", 5000, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 5000, time_insertion, time_merge);
+
+        clear_stack(&stack1);
+        clear_stack(&stack2);
+    }
+
+    file = fopen("biggest.txt", "r"); // (5) 10000 чисел
+    if (file != NULL)
+    {
+        Elem *stack1 = NULL;
+        Elem *stack2 = NULL;
+        int num;
+
+        while (fscanf(file, "%d", &num) == 1)
+        {
+            push(&stack1, num);
+            push(&stack2, num);
+        }
+        fclose(file);
+
+        clock_t start = clock();
+        insertion_sort_stack(&stack1);
+        clock_t end = clock();
+        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        start = clock();
+        merge_sort_stack(&stack2);
+        end = clock();
+        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        printf("%6d | %12.4f | %10.4f\n", 10000, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 10000, time_insertion, time_merge);
+
+        clear_stack(&stack1);
+        clear_stack(&stack2);
+    }
+
     fclose(results);
 
-    printf("\nР—Р°РїСѓСЃРєР°РµРј РїРѕСЃС‚СЂРѕРµРЅРёРµ РіСЂР°С„РёРєР°...\n");
+    printf("\nЗапускаем построение графика...\n");
     system("python graph.py");
 }

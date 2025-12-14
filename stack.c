@@ -39,24 +39,6 @@ void print_stack(Elem *Top)
     printf("\n");
 }
 
-void read_from_file(Elem **Top, const char *filename)
-{
-    FILE *file = fopen(filename, "r");
-    if (file == NULL)
-    {
-        printf("Ошибка открытия файла %s\n", filename);
-        return;
-    }
-
-    int num;
-    while (fscanf(file, "%d", &num) == 1)
-    {
-        push(Top, num);
-    }
-
-    fclose(file);
-}
-
 void write_to_file(Elem *Top, const char *filename)
 {
     FILE *file = fopen(filename, "w");
@@ -76,25 +58,22 @@ void write_to_file(Elem *Top, const char *filename)
     fclose(file);
 }
 
-// Обработка режима --file
-void process_file_mode(const char *filename)
+void append_to_file(Elem *Top, const char *filename)
 {
-    printf("Режим работы с файлом: %s\n", filename);
-
-    Elem *Top = NULL;
-    read_from_file(&Top, filename);
-
-    if (Top == NULL)
+    FILE *file = fopen(filename, "a"); // Открываем для дописывания
+    if (file == NULL)
     {
-        printf("Файл пуст или не содержит чисел!\n");
+        printf("Ошибка открытия файла %s для дописывания\n", filename);
         return;
     }
 
-    printf("Исходный ряд чисел: ");
-    print_stack(Top);
+    fprintf(file, "\n");
+    Elem *current = Top;
+    while (current != NULL)
+    {
+        fprintf(file, "%d ", current->inf);
+        current = current->link;
+    }
 
-    write_to_file(Top, "input.txt");
-    printf("Исходный ряд записан в input.txt\n");
-
-    clear_stack(&Top);
+    fclose(file);
 }
