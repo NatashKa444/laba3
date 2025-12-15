@@ -161,7 +161,7 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        fprintf(results, "%d %.4f %.4f\n", 100, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 10, time_insertion, time_merge);
 
         clear_stack(&stack1);
         clear_stack(&stack2);
@@ -191,7 +191,7 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        fprintf(results, "%d %.4f %.4f\n", 500, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 50, time_insertion, time_merge);
 
         clear_stack(&stack1);
         clear_stack(&stack2);
@@ -221,7 +221,7 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        fprintf(results, "%d %.4f %.4f\n", 1000, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 100, time_insertion, time_merge);
 
         clear_stack(&stack1);
         clear_stack(&stack2);
@@ -251,7 +251,7 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        fprintf(results, "%d %.4f %.4f\n", 5000, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 500, time_insertion, time_merge);
 
         clear_stack(&stack1);
         clear_stack(&stack2);
@@ -281,7 +281,7 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        fprintf(results, "%d %.4f %.4f\n", 10000, time_insertion, time_merge);
+        fprintf(results, "%d %.4f %.4f\n", 1000, time_insertion, time_merge);
 
         clear_stack(&stack1);
         clear_stack(&stack2);

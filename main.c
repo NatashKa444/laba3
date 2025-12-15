@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     Elem *Top = NULL;
     int choice;
 
-    printf("Введите числа через пробел (для завершения введите любой не-число): ");
+    printf("Введите числа через пробел (для завершения введите любое не-число): ");
 
     int num;
     while (scanf("%d", &num) == 1)
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     if (Top == NULL)
     {
-        printf("Вы не ввели числа! Используются тестовые данные.\n");
+        printf("Вы не ввели числа!\n");
         return -1;
     }
 
