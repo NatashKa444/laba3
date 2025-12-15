@@ -7,5 +7,6 @@
 void insertion_sort_stack(Elem **Top);
 void merge_sort_stack(Elem **Top);
 void compare_sorting_methods();
+void split_stack(Elem *Top, Elem **left, Elem **right);
 
 #endif

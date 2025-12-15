@@ -84,6 +84,7 @@ void read_from_file(char *filename)
     if (!file)
     {
         printf("Ошибка открытия файла.");
+
         return;
     }
     int num;
