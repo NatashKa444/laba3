@@ -24,6 +24,9 @@ plt.legend()
 plt.grid(True)
 plt.savefig("graph.png")
 plt.show()
+sizes = []
+insertion = []
+merge = []
 
 
 print("Сравнение методов сортировки:")
