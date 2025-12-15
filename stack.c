@@ -77,3 +77,21 @@ void append_to_file(Elem *Top, const char *filename)
 
     fclose(file);
 }
+
+void read_from_file(char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (!file)
+    {
+        printf("Ошибка открытия файла.");
+        return;
+    }
+    int num;
+    while (fscanf(file, "%d", &num) == 1)
+    {
+        printf("%d ", num);
+    }
+    printf("\n");
+
+    fclose(file);
+}

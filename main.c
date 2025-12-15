@@ -13,32 +13,8 @@ int main(int argc, char *argv[])
     if (argc == 3 && strcmp(argv[1], "--file") == 0)
     {
         printf("Режим работы с файлом: %s\n", argv[2]);
-        printf("Введите числа через пробел (для завершения введите любой не-число): ");
-        int num;
-        Elem *original_stack = NULL;
-        while (scanf("%d", &num) == 1)
-        {
-            push(&original_stack, num);
-        }
-        while (getchar() != '\n')
-            ;
-        if (original_stack == NULL)
-        {
-            return 0;
-        }
-        printf("Введенный ряд чисел: ");
-        print_stack(original_stack);
-
-        write_to_file(original_stack, argv[2]);
-        printf("Исходные данные записаны в %s\n", argv[2]);
-
-        insertion_sort_stack(&original_stack);
-        printf("Отсортированный ряд: ");
-        print_stack(original_stack);
-        append_to_file(original_stack, argv[2]);
-        printf("Отсортированные данные дописаны в %s\n", argv[2]);
-
-        clear_stack(&original_stack);
+        read_from_file("input.txt");
+        read_from_file("sorted.txt");
         return 0;
     }
 
@@ -54,29 +30,21 @@ int main(int argc, char *argv[])
         push(&Top, num);
     }
 
-    // Очистка буфера
     while (getchar() != '\n')
         ;
 
-    // Если ничего не ввели
     if (Top == NULL)
     {
         printf("Вы не ввели числа! Используются тестовые данные.\n");
-        push(&Top, 5);
-        push(&Top, 2);
-        push(&Top, 8);
-        push(&Top, 1);
-        push(&Top, 9);
+        return -1;
     }
 
     printf("Создан стек: ");
     print_stack(Top);
+    write_to_file(Top, "input.txt");
 
-    // Основной цикл
-    do
+    while (choice != 4)
     {
-        // Меню прямо в main (без функции)
-        printf("\n=== МЕНЮ РАБОТЫ СО СТЕКОМ ===\n");
         printf("1. Сортировка прямым включением\n");
         printf("2. Сортировка слиянием\n");
         printf("3. Сравнение методов сортировки\n");
@@ -85,7 +53,7 @@ int main(int argc, char *argv[])
 
         scanf("%d", &choice);
         while (getchar() != '\n')
-            ; // Очистка буфера
+            ;
 
         switch (choice)
         {
@@ -95,6 +63,7 @@ int main(int argc, char *argv[])
             insertion_sort_stack(&Top);
             printf("После сортировки: ");
             print_stack(Top);
+            write_to_file(Top, "sorted.txt");
             break;
 
         case 2:
@@ -103,6 +72,7 @@ int main(int argc, char *argv[])
             merge_sort_stack(&Top);
             printf("После сортировки: ");
             print_stack(Top);
+            write_to_file(Top, "sorted.txt");
             break;
 
         case 3:
@@ -116,8 +86,7 @@ int main(int argc, char *argv[])
         default:
             printf("Неверный выбор! Введите 1-4.\n");
         }
-
-    } while (choice != 4);
+    }
 
     clear_stack(&Top);
     return 0;

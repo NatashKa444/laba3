@@ -57,7 +57,7 @@ Elem *merge(Elem *left, Elem *right)
         left = left->link;
     }
 
-    // Добавляем оставшиеся элементы из правого стека
+    // Аналолгично из правого
     while (right != NULL)
     {
         push(&temp_stack, right->inf);
@@ -86,7 +86,6 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
     // Используем метод "черепаха и заяц" для нахождения середины
     Elem *slow = Top;
     Elem *fast = Top->link;
-
     // fast двигается в 2 раза быстрее slow
     while (fast != NULL)
     {
@@ -97,7 +96,6 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
             fast = fast->link;
         }
     }
-
     // slow указывает на середину
     *left = Top;
     *right = slow->link;
@@ -109,7 +107,7 @@ void merge_sort_stack(Elem **Top)
 {
     if (*Top == NULL || (*Top)->link == NULL)
     {
-        return; // Базовый случай: стек пуст или содержит один элемент
+        return;
     }
 
     Elem *left = NULL;
@@ -118,21 +116,17 @@ void merge_sort_stack(Elem **Top)
     // Разделяем стек на две части
     split_stack(*Top, &left, &right);
 
-    // Рекурсивно сортируем каждую часть
+    // Сортируем каждую часть
     merge_sort_stack(&left);
     merge_sort_stack(&right);
 
-    // Сливаем отсортированные части
-    *Top = merge(left, right);
+    *Top = merge(left, right); // Сливаем отсортированные части
 }
 
 // Сравнение методов сортировки
 void compare_sorting_methods()
 {
     setlocale(LC_ALL, "Russian");
-    printf("\nСравнение методов сортировки:\n");
-    printf("Размер | Вставками(с) | Слиянием(с)\n");
-    printf("-----------------------------------\n");
 
     // для сохранения результатов
     FILE *results = fopen("results.txt", "w");
@@ -167,7 +161,6 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        printf("%6d | %12.4f | %10.4f\n", 100, time_insertion, time_merge);
         fprintf(results, "%d %.4f %.4f\n", 100, time_insertion, time_merge);
 
         clear_stack(&stack1);
@@ -198,7 +191,6 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        printf("%6d | %12.4f | %10.4f\n", 500, time_insertion, time_merge);
         fprintf(results, "%d %.4f %.4f\n", 500, time_insertion, time_merge);
 
         clear_stack(&stack1);
@@ -229,7 +221,6 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        printf("%6d | %12.4f | %10.4f\n", 1000, time_insertion, time_merge);
         fprintf(results, "%d %.4f %.4f\n", 1000, time_insertion, time_merge);
 
         clear_stack(&stack1);
@@ -260,7 +251,6 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        printf("%6d | %12.4f | %10.4f\n", 5000, time_insertion, time_merge);
         fprintf(results, "%d %.4f %.4f\n", 5000, time_insertion, time_merge);
 
         clear_stack(&stack1);
@@ -291,7 +281,6 @@ void compare_sorting_methods()
         end = clock();
         double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-        printf("%6d | %12.4f | %10.4f\n", 10000, time_insertion, time_merge);
         fprintf(results, "%d %.4f %.4f\n", 10000, time_insertion, time_merge);
 
         clear_stack(&stack1);
@@ -300,6 +289,6 @@ void compare_sorting_methods()
 
     fclose(results);
 
-    printf("\nЗапускаем построение графика...\n");
+    printf("\nПостроение графика...\n");
     system("python graph.py");
 }

@@ -24,7 +24,7 @@ plt.legend()
 plt.grid(True)
 plt.savefig("graph.png")
 plt.show()
-
+print("Сравнение методов сортировки:")
 print("Прямое включение - медленнее на больших данных")
 print("Слиянием - быстрее на больших данных")
 print("График сохранен как graph.png")

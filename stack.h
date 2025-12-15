@@ -17,5 +17,6 @@ void clear_stack(Elem **Top);
 
 void write_to_file(Elem *Top, const char *filename);
 void append_to_file(Elem *Top, const char *filename);
+void read_from_file(char *filename);
 
 #endif
