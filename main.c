@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     if (Top == NULL)
     {
         printf("Вы не ввели числа!\n");
-        return -1;
+        return 1;
     }
 
     printf("Создан стек: ");

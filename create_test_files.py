@@ -2,32 +2,31 @@ import random
 
 # 1. smallest.txt - 10 чисел
 with open("smallest.txt", "w") as f:
-    numbers = [random.randint(1, 1000) for _ in range(10)]
+    numbers = [random.randint(1, 1000) for _ in range(50)]
     f.write(" ".join(str(x) for x in numbers))
 
 # 2. small.txt - 50 чисел
 with open("small.txt", "w") as f:
-    numbers = [random.randint(1, 1000) for _ in range(50)]
+    numbers = [random.randint(1, 1000) for _ in range(100)]
     f.write(" ".join(str(x) for x in numbers))
 
 # 3. medium.txt - 100 чисел
 with open("medium.txt", "w") as f:
-    numbers = [random.randint(1, 1000) for _ in range(100)]
+    numbers = [random.randint(1, 1000) for _ in range(500)]
     f.write(" ".join(str(x) for x in numbers))
 
 # 4. big.txt - 500 чисел
 with open("big.txt", "w") as f:
-    numbers = [random.randint(1, 1000) for _ in range(500)]
+    numbers = [random.randint(1, 1000) for _ in range(1000)]
     f.write(" ".join(str(x) for x in numbers))
-
 # 5. biggest.txt - 1000 чисел
 with open("biggest.txt", "w") as f:
-    numbers = [random.randint(1, 1000) for _ in range(1000)]
+    numbers = [random.randint(1, 2000) for _ in range(2000)]
     f.write(" ".join(str(x) for x in numbers))
 
 print("Файлы созданы:")
-print("- smallest.txt (10 чисел)")
-print("- small.txt (50 чисел)")
-print("- medium.txt (100 чисел)")
-print("- big.txt (500 чисел)")
-print("- biggest.txt (1000 чисел)")
+print("- smallest.txt (50 чисел)")
+print("- small.txt (100 чисел)")
+print("- medium.txt (500 чисел)")
+print("- big.txt (1000 чисел)")
+print("- biggest.txt (2000 чисел)")

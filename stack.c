@@ -87,6 +87,8 @@ void read_from_file(char *filename)
 
         return;
     }
+
+    
     int num;
     while (fscanf(file, "%d", &num) == 1)
     {

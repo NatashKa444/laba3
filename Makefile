@@ -4,7 +4,6 @@ FILES = main.o stack.o sorting.o
 .PHONY: all clean run
 
 all: $(TARGET)
-	gcc -o $(TARGET) $(FILES)
 
 run: 
 	./$(TARGET) 
@@ -22,7 +21,7 @@ stack.o: stack.c
 	gcc -c -o stack.o stack.c
 
 sorting.o: sorting.c
-	gcc -c sorting.c -o sorting.o
+	gcc -c -o sorting.o sorting.c
 
 $(TARGET): main.o stack.o sorting.o
 	gcc -o $(TARGET) main.o stack.o sorting.o

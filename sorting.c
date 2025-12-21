@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+const int COUNT_REPEATS = 50;
 
-// Сортировка прямым включением
 void insertion_sort_stack(Elem **Top)
 {
     if (*Top == NULL || (*Top)->link == NULL)
@@ -29,13 +29,11 @@ void insertion_sort_stack(Elem **Top)
     }
 }
 
-// Функция слияния двух отсортированных стеков
 Elem *merge(Elem *left, Elem *right)
 {
     Elem *result = NULL;
     Elem *temp_stack = NULL;
 
-    // Сливаем пока оба стека не пусты
     while (left != NULL && right != NULL)
     {
         if (left->inf <= right->inf)
@@ -50,30 +48,28 @@ Elem *merge(Elem *left, Elem *right)
         }
     }
 
-    // Добавляем оставшиеся элементы из левого стека
+    // Оставшиеся элементы из левого стека
     while (left != NULL)
     {
         push(&temp_stack, left->inf);
         left = left->link;
     }
 
-    // Аналолгично из правого
+    // И из правого
     while (right != NULL)
     {
         push(&temp_stack, right->inf);
         right = right->link;
     }
 
-    // Разворачиваем временный стек чтобы получить правильный порядок
+    // Разворот временного стека для правильного порядка
     while (temp_stack != NULL)
     {
         push(&result, pop(&temp_stack));
     }
-
     return result;
 }
 
-// Разделение стека на две части
 void split_stack(Elem *Top, Elem **left, Elem **right)
 {
     if (Top == NULL || Top->link == NULL)
@@ -83,10 +79,8 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
         return;
     }
 
-    // Используем метод "черепаха и заяц" для нахождения середины
     Elem *slow = Top;
     Elem *fast = Top->link;
-    // fast двигается в 2 раза быстрее slow
     while (fast != NULL)
     {
         fast = fast->link;
@@ -96,13 +90,11 @@ void split_stack(Elem *Top, Elem **left, Elem **right)
             fast = fast->link;
         }
     }
-    // slow указывает на середину
     *left = Top;
     *right = slow->link;
-    slow->link = NULL; // Разрываем связь между половинами
+    slow->link = NULL; 
 }
 
-// Сортировка слиянием на стеке (рекурсивная)
 void merge_sort_stack(Elem **Top)
 {
     if (*Top == NULL || (*Top)->link == NULL)
@@ -113,22 +105,28 @@ void merge_sort_stack(Elem **Top)
     Elem *left = NULL;
     Elem *right = NULL;
 
-    // Разделяем стек на две части
     split_stack(*Top, &left, &right);
 
-    // Сортируем каждую часть
     merge_sort_stack(&left);
     merge_sort_stack(&right);
 
-    *Top = merge(left, right); // Сливаем отсортированные части
+    *Top = merge(left, right); 
 }
 
-// Сравнение методов сортировки
+
 void compare_sorting_methods()
 {
     setlocale(LC_ALL, "Russian");
+    FILE *check = fopen("results.txt", "r");
+    if (check != NULL)
+    {
+        fclose(check);
+        printf("Результаты уже существуют. Используется файл results.txt\n");
+        printf("\nПостроение графика...\n");
+        system("python graph.py");
+        return;
+    }
 
-    // для сохранения результатов
     FILE *results = fopen("results.txt", "w");
     if (results == NULL)
     {
@@ -136,159 +134,207 @@ void compare_sorting_methods()
         return;
     }
     fprintf(results, "Size Insertion Merge\n");
-
-    FILE *file = fopen("smallest.txt", "r"); // (1) 100 чисел
-    if (file != NULL)
+    
+    // Измерение smallest.txt (50 чисел)
+    double once_insertion = 0.0;
+    double once_merge = 0.0;
+    for (int repeat = 0; repeat < COUNT_REPEATS; repeat++)
     {
+        FILE *file = fopen("smallest.txt", "r");
+        if (file == NULL)
+        {
+            printf("Ошибка: не удалось открыть файл smallest.txt\n");
+            return;
+        }
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
-
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
         fclose(file);
-
+        
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
+        once_insertion += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        fprintf(results, "%d %.4f %.4f\n", 10, time_insertion, time_merge);
-
+        once_merge += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         clear_stack(&stack1);
         clear_stack(&stack2);
+        
     }
-
-    file = fopen("small.txt", "r"); // (2) 500 чисел
-    if (file != NULL)
+    double avg_insertion = once_insertion / COUNT_REPEATS;
+    double avg_merge = once_merge / COUNT_REPEATS;
+    fprintf(results, "50 %.6f %.6f\n", avg_insertion, avg_merge);
+    
+    // Измерение small.txt (100 чисел)
+    once_insertion = 0.0;
+    once_merge = 0.0;
+    for (int repeat = 0; repeat < COUNT_REPEATS; repeat++)
     {
+        FILE *file = fopen("small.txt", "r");
+        if (file == NULL)
+        {
+            printf("Ошибка: не удалось открыть файл small.txt\n");
+            return;
+        }
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
-
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
         fclose(file);
-
+        
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
+        once_insertion += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        fprintf(results, "%d %.4f %.4f\n", 50, time_insertion, time_merge);
-
+        once_merge += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         clear_stack(&stack1);
         clear_stack(&stack2);
+        
     }
-
-    file = fopen("medium.txt", "r"); // (3) 1000 чисел
-    if (file != NULL)
+    
+    avg_insertion = once_insertion / COUNT_REPEATS;
+    avg_merge = once_merge / COUNT_REPEATS;
+    fprintf(results, "100 %.6f %.6f\n", avg_insertion, avg_merge);
+    
+    // Измерение medium.txt (1000 чисел)
+    once_insertion = 0.0;
+    once_merge = 0.0;
+    for (int repeat = 0; repeat < COUNT_REPEATS; repeat++)
     {
+        FILE *file = fopen("medium.txt", "r");
+        if (file == NULL)
+        {
+            printf("Ошибка: не удалось открыть файл medium.txt\n");
+            return;
+        }
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
-
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
         fclose(file);
-
+        
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
+        once_insertion += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        fprintf(results, "%d %.4f %.4f\n", 100, time_insertion, time_merge);
-
+        once_merge += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         clear_stack(&stack1);
         clear_stack(&stack2);
+        
     }
-
-    file = fopen("big.txt", "r"); // (4) 5000 чисел
-    if (file != NULL)
+    
+    avg_insertion = once_insertion / COUNT_REPEATS;
+    avg_merge = once_merge / COUNT_REPEATS;
+    fprintf(results, "500 %.6f %.6f\n", avg_insertion, avg_merge);
+    
+    // Измерение big.txt (5000 чисел)
+    once_insertion = 0.0;
+    once_merge = 0.0;
+    for (int repeat = 0; repeat < COUNT_REPEATS; repeat++)
     {
+        FILE *file = fopen("big.txt", "r");
+        if (file == NULL)
+        {
+            printf("Ошибка: не удалось открыть файл big.txt\n");
+            return;
+        }
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
-
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
         fclose(file);
-
+        
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
+        once_insertion += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        fprintf(results, "%d %.4f %.4f\n", 500, time_insertion, time_merge);
-
+        once_merge += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         clear_stack(&stack1);
         clear_stack(&stack2);
+        
     }
-
-    file = fopen("biggest.txt", "r"); // (5) 10000 чисел
-    if (file != NULL)
+    
+    avg_insertion = once_insertion / COUNT_REPEATS;
+    avg_merge = once_merge / COUNT_REPEATS;
+    fprintf(results, "1000 %.6f %.6f\n", avg_insertion, avg_merge);
+    
+    // Измерение biggest.txt (2000 чисел)
+    once_insertion = 0.0;
+    once_merge = 0.0;
+    for (int repeat = 0; repeat < COUNT_REPEATS; repeat++)
     {
+        FILE *file = fopen("biggest.txt", "r");
+        if (file == NULL)
+        {
+            printf("Ошибка: не удалось открыть файл biggest.txt\n");
+            return;
+        }
         Elem *stack1 = NULL;
         Elem *stack2 = NULL;
         int num;
-
         while (fscanf(file, "%d", &num) == 1)
         {
             push(&stack1, num);
             push(&stack2, num);
         }
         fclose(file);
-
+        
         clock_t start = clock();
         insertion_sort_stack(&stack1);
         clock_t end = clock();
-        double time_insertion = ((double)(end - start)) / CLOCKS_PER_SEC;
-
+        once_insertion += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         start = clock();
         merge_sort_stack(&stack2);
         end = clock();
-        double time_merge = ((double)(end - start)) / CLOCKS_PER_SEC;
-
-        fprintf(results, "%d %.4f %.4f\n", 1000, time_insertion, time_merge);
-
+        once_merge += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
         clear_stack(&stack1);
         clear_stack(&stack2);
     }
+
+    avg_insertion = once_insertion / COUNT_REPEATS;
+    avg_merge = once_merge / COUNT_REPEATS;
+    fprintf(results, "2000 %.6f %.6f\n", avg_insertion, avg_merge);
 
     fclose(results);
-
-    printf("\nПостроение графика...\n");
+    printf("Результаты сохранены в файл results.txt\n");
+    printf("Построение графика...\n");
     system("python graph.py");
 }
