@@ -121,7 +121,6 @@ void compare_sorting_methods()
     if (check != NULL)
     {
         fclose(check);
-        printf("Результаты уже существуют. Используется файл results.txt\n");
         printf("\nПостроение графика...\n");
         system("python graph.py");
         return;
